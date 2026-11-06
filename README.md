@@ -8,6 +8,8 @@ A funny car-tee storefront hosted on Cloudflare Workers. Checkout runs on Stripe
 - `migrations/`: D1 schema
 - `docs/STRATEGY.md`: differentiation, traffic plan, and vendor recommendations
 - `docs/BRAND.md`: logo, palette, type, voice, and IP guardrails
+- `docs/PRINT-SPECS.md`: print file spec for designers (sizes, DPI, format, checklist)
+- `scripts/check-print-file.mjs`: pre-flight checker, `npm run check:print -- file.png`
 - `docs/ROADMAP.md`: what's next
 
 ## Run locally

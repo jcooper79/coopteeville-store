@@ -9,7 +9,8 @@
     "db:create": "wrangler d1 create coopteeville",
     "db:migrate:local": "wrangler d1 migrations apply coopteeville --local",
     "db:migrate": "wrangler d1 migrations apply coopteeville --remote",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "check:print": "node scripts/check-print-file.mjs"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20261104.1",
