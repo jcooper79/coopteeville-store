@@ -116,8 +116,11 @@ section.block{padding-block:72px}
 
 /* Shop */
 .filters{display:flex;gap:8px;flex-wrap:wrap}
-.chip{border:2px solid var(--ink);background:var(--paper);border-radius:999px;padding:.25em .9em;font-weight:700;cursor:pointer}
-.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.chip{--c:var(--taxi);display:inline-flex;align-items:center;gap:.45em;border:2px solid var(--ink);background:color-mix(in srgb,var(--c) 30%,#fff);color:var(--ink);border-radius:999px;padding:.25em .9em;font-weight:800;cursor:pointer;box-shadow:0 3px 0 var(--ink);transition:transform .12s}
+.chip::before{content:"";width:12px;height:12px;border-radius:50%;background:var(--c);border:2px solid var(--ink)}
+.chip:hover{transform:translateY(-2px)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);box-shadow:0 3px 0 var(--c)}
+.chip[aria-pressed="true"]::before{border-color:var(--paper)}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:22px}
 .card{background:var(--paper);border:3px solid var(--ink);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column}
 .card .art{background:var(--tile,#dff1ff);padding:14px 18px 6px;position:relative}
@@ -131,6 +134,15 @@ section.block{padding-block:72px}
 .who{font-size:.85rem;font-weight:700;color:var(--ink-soft)}
 .price{font-family:var(--display);font-size:1.1rem}
 .buy{display:flex;gap:8px;margin-top:auto}
+.opts{display:grid;gap:8px}
+.card .swatches{gap:8px}
+.card .sw{width:28px;height:28px;border:2px solid var(--ink);border-radius:50%;cursor:pointer;padding:0}
+.card .sw[aria-pressed="true"]{outline:3px solid var(--tangerine);outline-offset:2px}
+.sizes{display:grid;grid-template-columns:repeat(6,1fr);gap:4px}
+.sz{min-width:0;border:2px solid var(--ink);background:var(--paper);color:var(--ink);border-radius:8px;padding:.1em .4em;font-weight:800;font-size:.82rem;cursor:pointer}
+.sz:hover{background:var(--ground)}
+.sz[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.card .art{border-bottom:2px solid var(--line)}
 .buy select{border:2px solid var(--ink);border-radius:10px;padding:.25em .4em;background:var(--paper);font-weight:700}
 .buy .btn{flex:1;justify-content:center;white-space:nowrap;padding-inline:.7em}
 .buy .park{flex:0 0 auto;font-family:var(--display);background:#1e5fbf;color:#fff}
@@ -175,6 +187,33 @@ section.block{padding-block:72px}
 .club p{margin:.3em 0 0;font-weight:600;max-width:60ch}
 @media (max-width:700px){.club{grid-template-columns:1fr}.odo span{font-size:1.5rem}}
 
+/* Car Club */
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.clubbox{background:var(--taxi);border:3px solid var(--ink);border-radius:24px;padding:28px;display:grid;gap:22px}
+.club-head{display:grid;grid-template-columns:1.2fr 1fr;gap:24px;align-items:end}
+.club-head p{margin:.4em 0 0;font-weight:600;max-width:52ch}
+.join{display:flex;flex-wrap:wrap;gap:10px}
+.join input{flex:1;min-width:0;border:3px solid var(--ink);border-radius:999px;padding:.5em 1em;font-weight:700;background:var(--paper);color:var(--ink)}
+.join small{flex-basis:100%;font-weight:700}
+.collect-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.collect-top h3{font-size:1.1rem}
+.slots{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.slot{background:var(--paper);border:3px solid var(--ink);border-radius:16px;padding:8px 6px 10px;text-align:center;min-width:0}
+.slot svg{width:100%;height:auto}
+.slot b{display:block;font-size:.8rem;line-height:1.15}
+.slot small{display:inline-block;margin-top:4px;font-weight:800;font-size:.7rem;border-radius:999px;padding:0 8px;background:var(--ground)}
+.slot.locked svg{filter:grayscale(1);opacity:.3}
+.slot.ingarage{border-style:dashed}
+.slot.ingarage small{background:var(--sky)}
+.slot.owned small{background:var(--mint)}
+.rewards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.reward{background:var(--paper);border:3px solid var(--ink);border-radius:14px;padding:10px 14px;display:grid;gap:2px;font-weight:600}
+.reward b{font-family:var(--display);font-weight:400}
+.tiers{display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:center}
+.tiers .odo{width:max-content}
+.tierlist{margin:0;padding-left:1.3em;display:grid;grid-template-columns:repeat(2,1fr);gap:6px 24px;font-weight:600}
+@media (max-width:820px){.club-head,.tiers{grid-template-columns:1fr}.slots{grid-template-columns:repeat(3,1fr)}.rewards{grid-template-columns:1fr}.tierlist{grid-template-columns:1fr}.clubbox{padding:20px}}
+
 /* Footer */
 footer{background:var(--ink);color:#cfd5ea;padding-block:48px 32px;margin-top:72px}
 footer .cols{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:28px}
@@ -217,8 +256,8 @@ footer .fine{border-top:1px solid #39405c;margin-top:28px;padding-top:16px;font-
 .totals .r.big{font-family:var(--display);font-size:1.2rem}
 .ship-meter{font-size:.9rem;font-weight:700;color:var(--ink-soft)}
 .empty{color:var(--ink-soft);font-weight:700;text-align:center;padding:30px 0}
-.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(150%);background:var(--ink);color:var(--paper);padding:.7em 1.2em;border-radius:14px;font-weight:700;z-index:30;transition:transform .3s;max-width:calc(100% - 32px)}
-.toast.show{transform:translateX(-50%)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(calc(100% + 60px));visibility:hidden;background:var(--ink);color:var(--paper);padding:.7em 1.2em;border-radius:14px;font-weight:700;z-index:30;transition:transform .3s,visibility 0s .3s;max-width:calc(100% - 32px)}
+.toast.show{transform:translateX(-50%);visibility:visible;transition:transform .3s}
 
 /* Garage cart: follows the page, a car drives in on every add */
 .garage{position:fixed;right:max(14px,env(safe-area-inset-right,0px));bottom:calc(14px + env(safe-area-inset-bottom,0px));width:128px;z-index:15;background:none;border:0;padding:0;cursor:pointer;filter:drop-shadow(0 6px 0 rgba(28,32,51,.18))}
@@ -249,6 +288,7 @@ footer .fine{border-top:1px solid #39405c;margin-top:28px;padding-top:16px;font-
       <a href="#shop">Shop</a>
       <a href="#plates">Plate Maker</a>
       <a href="#pitlane">Pit Lane</a>
+      <a href="#club">Car Club</a>
       <a href="#why">Why Us</a>
     </nav>
     <div class="hdr-icons"><button class="icon-btn" id="openLot" aria-label="Open your parking lot, 0 saved"><svg viewBox="0 0 120 112" aria-hidden="true"><rect x="56" y="70" width="8" height="40" fill="#1c2033"/><rect x="18" y="6" width="84" height="72" rx="12" fill="#1e5fbf" stroke="#1c2033" stroke-width="5"/><rect x="26" y="14" width="68" height="56" rx="7" fill="none" stroke="#fff" stroke-width="3"/><text x="52" y="60" text-anchor="middle" font-family="Bungee,Arial Black,sans-serif" font-size="44" fill="#fff">P</text><g class="lot-badge"><circle cx="96" cy="16" r="15" fill="#ffc83a" stroke="#1c2033" stroke-width="3"/><text id="lotCount" x="96" y="22" text-anchor="middle" font-family="Bungee,Arial Black,sans-serif" font-size="15" fill="#1c2033">0</text></g></svg><span>Lot</span></button><button class="icon-btn" id="openCart" aria-label="Open your garage (cart), 0 items"><svg viewBox="0 0 120 112" aria-hidden="true"><path d="M2 42 L60 6 L118 42 Z" fill="#ff4b3e" stroke="#1c2033" stroke-width="5" stroke-linejoin="round"/><rect x="10" y="40" width="100" height="70" rx="4" fill="#ffc83a" stroke="#1c2033" stroke-width="5"/><text x="60" y="33" text-anchor="middle" font-family="Bungee,Arial Black,sans-serif" font-size="11" fill="#fff">GARAGE</text><rect x="22" y="50" width="76" height="58" fill="#f4f8ff" stroke="#1c2033" stroke-width="4"/><path d="M22 64 H98 M22 78 H98 M22 92 H98" stroke="#b9c4d6" stroke-width="3"/><circle cx="60" cy="79" r="17" fill="#ff4b3e" stroke="#1c2033" stroke-width="3"/><text id="cartCount" x="60" y="86" text-anchor="middle" font-family="Bungee,Arial Black,sans-serif" font-size="17" fill="#fff">0</text></svg><span>Garage</span></button></div>
@@ -264,7 +304,7 @@ footer .fine{border-top:1px solid #39405c;margin-top:28px;padding-top:16px;font-
     <div>
       <div class="sign">Welcome to Coopteeville · Pop. 1,000,000 bad puns</div>
       <h1>Tees with a little horsepower and a lot of <em>horseplay.</em></h1>
-      <p class="lede">Every shirt is a line from one of our residents. Collect the cast, vote on what gets printed next, or put your own vanity plate on a tee.</p>
+      <p class="lede">Every shirt is a line from one of our residents. Collect the whole cast, vote on what gets printed next, or put your own vanity plate on a tee.</p>
       <div class="hero-ctas">
         <a class="btn red" href="#shop">Shop the drop</a>
         <a class="btn alt" href="#plates">Make your plate</a>
@@ -382,11 +422,37 @@ footer .fine{border-top:1px solid #39405c;margin-top:28px;padding-top:16px;font-
   </div>
 </section>
 
-<section class="block" style="padding-top:0">
+<section class="block" id="club" style="padding-top:0">
   <div class="wrap">
-    <div class="club">
-      <div class="odo" aria-label="Mileage Club odometer, 004,280 miles"><span>0</span><span>0</span><span>4</span><span>2</span><span>8</span><span>0</span></div>
-      <div><h2 style="font-size:1.8rem">Mileage Club</h2><p>Every dollar is a mile on your odometer. Hit 100 miles for free shipping for life, 250 to unlock secret residents, 500 to get your name hidden in a future design.</p></div>
+    <div class="clubbox">
+      <div class="club-head">
+        <div><div class="eyebrow">Free to join</div><h2>Collect them all. Join the Car Club.</h2>
+        <p>Every shirt you buy stamps that resident into your collection and puts miles on your odometer. Fill the garage and unlock rewards.</p></div>
+        <form class="join" id="joinForm" novalidate>
+          <label for="joinEmail" class="sr">Email address</label>
+          <input id="joinEmail" type="email" placeholder="you@email.com" autocomplete="email">
+          <button class="btn red" type="submit">Join the club</button>
+          <small id="joinMsg">One email a week: Pit Lane voting and new drops. Leave anytime.</small>
+        </form>
+      </div>
+      <div class="collect">
+        <div class="collect-top"><h3>Your collection</h3><span class="who" id="collectStatus"></span></div>
+        <div class="slots" id="slots"></div>
+      </div>
+      <div class="rewards">
+        <div class="reward"><b>3 residents</b><span>Free sticker pack with your next order</span></div>
+        <div class="reward"><b>All 6 residents</b><span>"Full Garage" members-only tee and a gold resident card</span></div>
+        <div class="reward"><b>The whole Tired Collection</b><span>Unlocks a secret resident</span></div>
+      </div>
+      <div class="tiers">
+        <div><div class="odo" aria-label="Your odometer: 0 miles"><span>0</span><span>0</span><span>0</span><span>0</span><span>0</span><span>0</span></div><small class="who" id="odoNote">$1 spent = 1 mile</small></div>
+        <ol class="tierlist">
+          <li><b>Learner's Permit</b> · 0 mi · vote on Pit Lane</li>
+          <li><b>Licensed Driver</b> · 100 mi · free shipping for life</li>
+          <li><b>Road Tripper</b> · 250 mi · secret residents</li>
+          <li><b>Hall of Famer</b> · 500 mi · your name hidden in a future design</li>
+        </ol>
+      </div>
     </div>
   </div>
 </section>
@@ -396,7 +462,7 @@ footer .fine{border-top:1px solid #39405c;margin-top:28px;padding-top:16px;font-
   <div class="wrap">
     <div class="cols">
       <div><h4>COOPTEEVILLE</h4><p style="margin:0;max-width:36ch">Funny car tees, printed on demand and shipped from the closest print partner to you. Made by a small team and a crew of very opinionated cars.</p></div>
-      <div><h4>Shop</h4><a href="#shop">On the Grid</a><a href="#plates">Plate Maker</a><a href="#pitlane">Pit Lane</a><a href="#why">Club Kits</a></div>
+      <div><h4>Shop</h4><a href="#shop">On the Grid</a><a href="#plates">Plate Maker</a><a href="#pitlane">Pit Lane</a><a href="#club">Car Club</a><a href="#why">Club Kits</a></div>
       <div><h4>Help</h4><a href="/policies/shipping">Shipping</a><a href="/policies/returns">Returns &amp; reprints</a><a href="/policies/size-guide">Size guide</a><a href="/contact">Contact</a></div>
       <div><h4>Legal</h4><a href="/policies/privacy">Privacy</a><a href="/policies/terms">Terms</a><a href="/policies/accessibility">Accessibility</a><a href="/policies/cookies">Cookies</a></div>
     </div>
@@ -457,6 +523,7 @@ const RESIDENTS=[
  {id:"rusty",name:"Rusty Bolts",role:"Junkyard philosopher",body:"#b5835a",mood:"smirk",acc:"rust",lines:["My check engine light is just decorative.","Built different. Rebuilt twice.","Rust is just patina with a bad attitude."]}
 ];
 const RES=Object.fromEntries(RESIDENTS.map(r=>[r.id,r]));
+let collected=[];try{collected=JSON.parse(localStorage.getItem("cv-collected")||"[]")}catch(e){}
 
 const BROWS={
  happy:"M44 72 Q64 62 84 72 M116 72 Q136 62 156 72",
@@ -597,6 +664,7 @@ function plateArt(cu,color){
 }
 
 /* ---------- Catalog (display copy; server re-prices every order) ---------- */
+const ALL_COLORS=["white","black","heather","sky","cherry"];
 const PRODUCTS=[
  {id:"cv-001",saying:"I'm not speeding, I'm qualifying",res:"coop",color:"white",tile:"#ffe1dc",price:2800,lap:"Lap 1/3",left:58},
  {id:"cv-002",saying:"Powered by coffee and bad decisions",res:"dee",color:"black",tile:"#ffe4cc",price:2800,lap:"Lap 1/3",left:71},
@@ -610,15 +678,18 @@ const PRODUCTS=[
  {id:"cv-010",saying:"Running on fumes and spite",res:"dee",color:"cherry",tile:"#ffe4cc",price:2800,lap:"Lap 2/3",left:31},
  {id:"cv-011",saying:"Built different. Rebuilt twice.",res:"rusty",color:"black",tile:"#efdfd2",price:2800,lap:"Lap 1/3",left:55},
  {id:"cv-012",saying:"I brake for snacks",res:"coop",color:"sky",tile:"#ffe1dc",price:2800,lap:"Hall of Fame",hof:true},
- {id:"cv-013",saying:"Monday ran me over",res:"coop",color:"white",tile:"#e4e8f0",price:2800,lap:"New · Lap 1/3",left:100,art:"tread"},
- {id:"cv-014",saying:"Tired. Retired. Re-tired.",res:"rusty",color:"heather",tile:"#e4e8f0",price:2800,lap:"New · Lap 1/3",left:100,art:"tread"},
- {id:"cv-015",saying:"Exhausted. Also tired.",res:"torque",color:"white",tile:"#e4e8f0",price:2800,lap:"New · Lap 1/3",left:100,art:"tread"},
- {id:"cv-016",saying:"Running on bald tires and hope",res:"dee",color:"black",tile:"#e4e8f0",price:2800,lap:"New · Lap 1/3",left:100,art:"tread"},
- {id:"cv-017",saying:"Too tired to merge",res:"gran",color:"sky",tile:"#e4e8f0",price:2800,lap:"New · Lap 1/3",left:100,art:"tread"},
- {id:"cv-018",saying:"Tired of waiting for a charger",res:"sparky",color:"black",tile:"#e4e8f0",price:2800,lap:"New · Lap 1/3",left:100,art:"tread"},
- {id:"cv-019",saying:"Tread lightly, I'm tired",res:"dee",color:"heather",tile:"#e4e8f0",price:2800,lap:"New · Lap 1/3",left:100,art:"tread"}
+ {id:"cv-013",saying:"Monday ran me over",res:"coop",color:"white",tile:"#ffffff",price:2800,lap:"New · Lap 1/3",left:100,art:"tread",colors:ALL_COLORS},
+ {id:"cv-014",saying:"Tired. Retired. Re-tired.",res:"rusty",color:"heather",tile:"#ffffff",price:2800,lap:"New · Lap 1/3",left:100,art:"tread",colors:ALL_COLORS},
+ {id:"cv-015",saying:"Exhausted. Also tired.",res:"torque",color:"white",tile:"#ffffff",price:2800,lap:"New · Lap 1/3",left:100,art:"tread",colors:ALL_COLORS},
+ {id:"cv-016",saying:"Running on bald tires and hope",res:"dee",color:"black",tile:"#ffffff",price:2800,lap:"New · Lap 1/3",left:100,art:"tread",colors:ALL_COLORS},
+ {id:"cv-017",saying:"Too tired to merge",res:"gran",color:"sky",tile:"#ffffff",price:2800,lap:"New · Lap 1/3",left:100,art:"tread",colors:ALL_COLORS},
+ {id:"cv-018",saying:"Tired of waiting for a charger",res:"sparky",color:"black",tile:"#ffffff",price:2800,lap:"New · Lap 1/3",left:100,art:"tread",colors:ALL_COLORS},
+ {id:"cv-019",saying:"Tread lightly, I'm tired",res:"dee",color:"heather",tile:"#ffffff",price:2800,lap:"New · Lap 1/3",left:100,art:"tread",colors:ALL_COLORS}
 ];
 const SIZES=["S","M","L","XL","2XL","3XL"];
+const pick={};
+const colorOf=p=>pick[p.id]?.color||p.color;
+const sizeOf=p=>p.colors?(pick[p.id]?.size||"M"):$("#size-"+p.id).value;
 const sizeOpts=(sel="M")=>SIZES.map(s=>`<option${s===sel?" selected":""}>${s}</option>`).join("");
 
 /* ---------- Hero ---------- */
@@ -633,19 +704,25 @@ document.addEventListener("pointermove",e=>{const dx=(e.clientX/innerWidth-.5)*8
 /* ---------- Residents + filters ---------- */
 let filter="all";
 $("#residentList").innerHTML=RESIDENTS.map(r=>`<button class="res" data-res="${r.id}" aria-pressed="false">${carFront(r,{k:"card",still:false})}<h3>${esc(r.name)}</h3><small>${esc(r.role)}</small></button>`).join("");
-$("#filters").innerHTML=[["all","Everyone"],["tired","Tired Collection"],...RESIDENTS.map(r=>[r.id,r.name.split(" ")[0]])].map(([id,n])=>`<button class="chip" data-f="${id}" aria-pressed="${id==="all"}">${esc(n)}</button>`).join("");
+$("#filters").innerHTML=[["all","Everyone","#ffc83a"],["tired","Tired Collection","#4a5068"],...RESIDENTS.map(r=>[r.id,r.name.split(" ")[0],r.body])].map(([id,n,c])=>`<button class="chip" data-f="${id}" style="--c:${c}" aria-pressed="${id==="all"}">${esc(n)}</button>`).join("");
 function setFilter(f){filter=f;document.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",c.dataset.f===f));document.querySelectorAll(".res").forEach(c=>c.setAttribute("aria-pressed",c.dataset.res===f));renderGrid()}
 $("#filters").addEventListener("click",e=>{const b=e.target.closest(".chip");if(b)setFilter(b.dataset.f)});
 $("#residentList").addEventListener("click",e=>{const b=e.target.closest(".res");if(!b)return;setFilter(filter===b.dataset.res?"all":b.dataset.res);$("#shop").scrollIntoView({behavior:"smooth"})});
 
 function renderGrid(){
  const list=PRODUCTS.filter(p=>filter==="all"||(filter==="tired"?p.art==="tread":p.res===filter));
- $("#grid").innerHTML=list.map(p=>`<article class="card"><div class="art" style="--tile:${p.tile}"><span class="lap${p.hof?" hof":""}">${p.hof?"★ Hall of Fame":esc(p.lap)+" · "+p.left+" left"}</span>${tee(p.color,artFor(p))}</div>
- <div class="body"><h3>${esc(p.saying)}</h3><div class="meta"><span class="who">${esc(RES[p.res].name)} · ${TEE_COLORS[p.color].name}</span><span class="price">${money(p.price)}</span></div>
- <div class="buy"><select aria-label="Size for ${esc(p.saying)}" id="size-${p.id}">${sizeOpts()}</select><button class="btn sm" data-add="${p.id}">Add to garage</button><button class="btn sm alt park" data-park="${p.id}" aria-label="Save ${esc(p.saying)} for later in your parking lot" title="Save for later">P</button></div></div></article>`).join("");
+ $("#grid").innerHTML=list.map(p=>`<article class="card"><div class="art" style="--tile:${p.tile}"><span class="lap${p.hof?" hof":""}">${p.hof?"★ Hall of Fame":esc(p.lap)+" · "+p.left+" left"}</span>${tee(colorOf(p),artFor(p))}</div>
+ <div class="body"><h3>${esc(p.saying)}</h3><div class="meta"><span class="who">${esc(RES[p.res].name)} · ${TEE_COLORS[colorOf(p)].name}</span><span class="price">${money(p.price)}</span></div>
+ ${p.colors?`<div class="opts"><div class="swatches" role="group" aria-label="Shirt color">${p.colors.map(k=>`<button class="sw" data-pc="${p.id}" data-c="${k}" style="background:${TEE_COLORS[k].fill}" aria-label="${TEE_COLORS[k].name}" aria-pressed="${k===colorOf(p)}" title="${TEE_COLORS[k].name}"></button>`).join("")}</div><div class="sizes" role="group" aria-label="Size">${SIZES.map(z=>`<button class="sz" data-ps="${p.id}" data-z="${z}" aria-pressed="${z===sizeOf(p)}">${z}</button>`).join("")}</div></div>`:""}<div class="buy">${p.colors?"":`<select aria-label="Size for ${esc(p.saying)}" id="size-${p.id}">${sizeOpts()}</select>`}<button class="btn sm" data-add="${p.id}">Add to garage</button><button class="btn sm alt park" data-park="${p.id}" aria-label="Save ${esc(p.saying)} for later in your parking lot" title="Save for later">P</button></div></div></article>`).join("");
 }
 renderGrid();
-$("#grid").addEventListener("click",e=>{const pk=e.target.closest("[data-park]");if(pk){const p=PRODUCTS.find(x=>x.id===pk.dataset.park),sz=$("#size-"+p.id).value;parkItem({key:p.id+"-"+sz,id:p.id,name:p.saying,size:sz,color:p.color,price:p.price});return}const b=e.target.closest("[data-add]");if(!b)return;const p=PRODUCTS.find(x=>x.id===b.dataset.add);addToCart({key:p.id+"-"+$("#size-"+p.id).value,id:p.id,name:p.saying,size:$("#size-"+p.id).value,color:p.color,price:p.price})});
+$("#grid").addEventListener("click",e=>{
+ const pc=e.target.closest("[data-pc]"),ps=e.target.closest("[data-ps]");
+ if(pc||ps){const id=(pc||ps).dataset.pc||(pc||ps).dataset.ps;pick[id]={...pick[id],...(pc?{color:pc.dataset.c}:{size:ps.dataset.z})};renderGrid();const again=document.querySelector(pc?`[data-pc="${id}"][data-c="${pc.dataset.c}"]`:`[data-ps="${id}"][data-z="${ps.dataset.z}"]`);again&&again.focus();return}
+ const pk=e.target.closest("[data-park]"),b=e.target.closest("[data-add]");if(!pk&&!b)return;
+ const p=PRODUCTS.find(x=>x.id===(pk||b).dataset.park||x.id===(pk||b).dataset.add),sz=sizeOf(p),col=colorOf(p);
+ const item={key:p.id+"-"+col+"-"+sz,id:p.id,name:p.saying,size:sz,color:col,price:p.price};
+ pk?parkItem(item):addToCart(item)});
 
 /* ---------- Plate maker ---------- */
 let plateColor="white";
@@ -710,7 +787,7 @@ function renderCart(){
  $("#lines").innerHTML=cart.length?cart.map((c,i)=>`<div class="line">${lineArt(c)}<div><b>${esc(c.name)}</b><small>${esc(c.size)} · ${TEE_COLORS[c.color].name} · ${money(c.price)}</small><button class="linklike" data-parkline="${i}">Park for later</button></div><div class="qty"><button data-q="${i}" data-d="-1" aria-label="Remove one">−</button><span>${c.qty}</span><button data-q="${i}" data-d="1" aria-label="Add one">+</button></div></div>`).join(""):`<div class="empty">Your garage is empty.<br>Go pick up a resident.</div>`;
  $("#sub").textContent=money(sub);$("#ship").textContent=ship?money(ship):"Free";$("#tot").textContent=money(sub+ship);
  $("#shipMeter").textContent=sub===0?"Free shipping on orders over $60.":sub>=FREE_SHIP?"You've unlocked free shipping.":money(FREE_SHIP-sub)+" more for free shipping.";
- $("#checkout").disabled=!cart.length;
+ $("#checkout").disabled=!cart.length;renderClub();
 }
 $("#lines").addEventListener("click",e=>{const pl=e.target.closest("[data-parkline]");if(pl){const c=cart.splice(+pl.dataset.parkline,1)[0];save();renderCart();parkItem(c);return}const b=e.target.closest("[data-q]");if(!b)return;const c=cart[+b.dataset.q];c.qty+=+b.dataset.d;if(c.qty<=0)cart.splice(+b.dataset.q,1);save();renderCart()});
 function openCart(o){$("#drawer").classList.toggle("open",o);$("#drawer").setAttribute("aria-hidden",!o);$("#scrim").hidden=!o;if(o)$("#closeCart").focus()}
@@ -740,6 +817,23 @@ $("#lotSpots").addEventListener("click",e=>{const u=e.target.closest("[data-unpa
  else if(t){const c=lot.splice(+t.dataset.tow,1)[0];saveLot();renderLot();toast("Towed: "+c.name)}});
 $("#openLot").onclick=()=>{openCart(true);setTimeout(()=>$("#lot").scrollIntoView({behavior:"smooth",block:"start"}),320)};
 renderLot();
+
+/* ---------- Car Club: collect them all ---------- */
+function renderClub(){
+ const inGarage=new Set(cart.map(c=>PRODUCTS.find(x=>x.id===c.id)?.res).filter(Boolean));
+ const owned=new Set(collected);
+ const pending=[...inGarage].filter(r=>!owned.has(r)).length;
+ $("#slots").innerHTML=RESIDENTS.map(r=>{const st=owned.has(r.id)?"owned":inGarage.has(r.id)?"ingarage":"locked";
+  return `<div class="slot ${st}">${carFront(r,{k:"slot",still:true})}<b>${esc(r.name)}</b><small>${st==="owned"?"Collected":st==="ingarage"?"In your garage":"Not yet"}</small></div>`}).join("");
+ $("#collectStatus").textContent=`${owned.size} of ${RESIDENTS.length} collected`+(pending?` · check out to stamp ${pending} more`:"");
+ const miles=Math.floor(cart.reduce((a,c)=>a+c.qty*c.price,0)/100);
+ $("#odoNote").textContent=miles?`$1 spent = 1 mile · your garage would add ${miles} miles`:"$1 spent = 1 mile";
+}
+$("#joinForm").addEventListener("submit",async e=>{e.preventDefault();const em=$("#joinEmail").value.trim();
+ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){$("#joinMsg").textContent="Enter an email like you@email.com to join.";$("#joinEmail").focus();return}
+ try{const r=await fetch("/api/club/join",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({email:em})});if(!r.ok)throw 0;
+  $("#joinMsg").textContent="You're in. Your Learner's Permit is on its way to your inbox.";$("#joinEmail").value=""}
+ catch(err){$("#joinMsg").textContent="Concept preview: sign-up connects once the store is live."}});
 
 let tt;function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("show"),3200)}
 })();

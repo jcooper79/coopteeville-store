@@ -37,6 +37,7 @@ export default {
       if (pathname === "/api/checkout" && req.method === "POST") return await checkout(req, env);
       if (pathname === "/api/webhooks/stripe" && req.method === "POST") return await stripeWebhook(req, env);
       if (pathname === "/api/webhooks/printful" && req.method === "POST") return await printfulWebhook(req, env);
+      if (pathname === "/api/club/join" && req.method === "POST") return await joinClub(req, env);
       if (pathname === "/api/pitlane" && req.method === "GET") return await tallies(env);
       if (pathname === "/api/pitlane/vote" && req.method === "POST") return await vote(req, env);
       if (pathname.startsWith("/api/")) return json({ error: "Not found" }, 404);
@@ -175,8 +176,11 @@ async function stripeWebhook(req: Request, env: Env): Promise<Response> {
     return json({ received: true });
   }
 
+  const cart = JSON.parse(row.items_json) as CartItem[];
+  // Car Club: stamp residents and add miles. Never blocks fulfillment.
+  await stampCollection(env, s.customer_details?.email, cart, s.amount_total).catch((e) => console.error("club", e));
+
   try {
-    const cart = JSON.parse(row.items_json) as CartItem[];
     // Catalog items print automatically. Plates auto-print only once automated
     // moderation is trusted (PLATE_AUTO_APPROVE); until then they wait as drafts.
     const needsReview = cart.some((i) => i.custom) && env.PLATE_AUTO_APPROVE !== "true";
@@ -229,6 +233,31 @@ async function createPrintfulOrder(env: Env, s: any, cart: CartItem[], confirm: 
   const out = (await res.json()) as { result?: { id: number }; error?: { message: string } };
   if (!res.ok || !out.result) throw new Error(`printful ${res.status}: ${out.error?.message ?? "unknown"}`);
   return String(out.result.id);
+}
+
+/* ---------------- Car Club ---------------- */
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+async function joinClub(req: Request, env: Env): Promise<Response> {
+  const { email } = ((await req.json().catch(() => ({}))) ?? {}) as { email?: string };
+  const e = String(email ?? "").trim().toLowerCase();
+  if (!EMAIL_RE.test(e) || e.length > 254) return json({ error: "Enter a valid email address." }, 400);
+  await env.DB.prepare("INSERT INTO members (email, opted_in) VALUES (?, 1) ON CONFLICT(email) DO UPDATE SET opted_in = 1").bind(e).run();
+  return json({ ok: true });
+}
+
+async function stampCollection(env: Env, email: string | undefined, cart: CartItem[], amountTotal: number) {
+  if (!email) return;
+  const e = email.toLowerCase();
+  const miles = Math.floor((amountTotal ?? 0) / 100);
+  const residents = [...new Set(cart.map((i) => findProduct(i.id)?.resident).filter((r): r is string => !!r && r !== "you"))];
+  // Buyers are tracked for rewards; marketing email needs opted_in = 1 from the join form.
+  const stmts = [
+    env.DB.prepare("INSERT INTO members (email, miles) VALUES (?, ?) ON CONFLICT(email) DO UPDATE SET miles = miles + excluded.miles").bind(e, miles),
+    ...residents.map((r) => env.DB.prepare("INSERT OR IGNORE INTO collection (email, resident) VALUES (?, ?)").bind(e, r)),
+  ];
+  await env.DB.batch(stmts);
 }
 
 /* ---------------- Printful webhook -> tracking email ---------------- */
