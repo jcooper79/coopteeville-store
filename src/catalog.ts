@@ -44,6 +44,7 @@ export const PRODUCTS: Product[] = [
   p("cv-016", "Running on bald tires and hope", "dee", ["black"]),
   p("cv-017", "Too tired to merge", "gran", ["sky"]),
   p("cv-018", "Tired of waiting for a charger", "sparky", ["black"]),
+  p("cv-019", "Tread lightly, I'm tired", "dee", ["heather"]),
 ];
 
 export const PLATE: Product = {
@@ -53,6 +54,8 @@ export const PLATE: Product = {
 };
 
 export const PLATE_STYLES = ["classic", "sunset", "midnight", "racing"] as const;
+// "plate" = plate on its own; "runover" = Tired Collection: tire tracks + "I've been run over by" above the plate.
+export const PLATE_DESIGNS = ["plate", "runover"] as const;
 export const PLATE_TAGS = [
   "THE NAP STATE",
   "LAND OF 1000 POTHOLES",

@@ -1,5 +1,5 @@
 import {
-  COLORS, PIT_LANE_IDS, PLATE, PLATE_STYLES, PLATE_TAGS, SHIPPING, SIZES,
+  COLORS, PIT_LANE_IDS, PLATE, PLATE_DESIGNS, PLATE_STYLES, PLATE_TAGS, SHIPPING, SIZES,
   findProduct, validPlate, type Color, type Size,
 } from "./catalog";
 
@@ -24,7 +24,7 @@ interface CartItem {
   size: Size;
   color: Color;
   qty: number;
-  custom: { text: string; style: string; tag: string } | null;
+  custom: { text: string; style: string; tag: string; design: string } | null;
 }
 
 const json = (data: unknown, status = 200) =>
@@ -68,7 +68,9 @@ function parseCart(body: unknown): CartItem[] | string {
       const text = String(c?.text ?? "").toUpperCase();
       if (!validPlate(text)) return "That plate can't be printed. Try different letters.";
       if (!PLATE_STYLES.includes(String(c?.style) as never) || !PLATE_TAGS.includes(String(c?.tag))) return "Pick a plate style and tagline.";
-      custom = { text, style: String(c!.style), tag: String(c!.tag) };
+      const design = String(c?.design ?? "plate");
+      if (!PLATE_DESIGNS.includes(design as never)) return "Pick a plate design.";
+      custom = { text, style: String(c!.style), tag: String(c!.tag), design };
     }
     out.push({ id: product.id, size, color, qty, custom });
   }
@@ -96,7 +98,9 @@ async function checkout(req: Request, env: Env): Promise<Response> {
   cart.forEach((item, i) => {
     const product = findProduct(item.id)!;
     subtotal += product.priceCents * item.qty;
-    const name = item.custom ? `Vanity Plate Tee: ${item.custom.text}` : product.name;
+    const name = item.custom
+      ? `${item.custom.design === "runover" ? "Run Over By" : "Vanity Plate"} Tee: ${item.custom.text}`
+      : product.name;
     f.set(`line_items[${i}][quantity]`, String(item.qty));
     f.set(`line_items[${i}][price_data][currency]`, "usd");
     f.set(`line_items[${i}][price_data][unit_amount]`, String(product.priceCents));

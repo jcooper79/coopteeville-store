@@ -325,6 +325,12 @@ footer .fine{border-top:1px solid #39405c;margin-top:28px;padding-top:16px;font-
           <input id="plateText" maxlength="7" value="NAP TME" autocomplete="off" spellcheck="false" aria-describedby="plateHint">
         </label>
         <div class="hint" id="plateHint">Letters, numbers, and spaces. Keep it funny, not rude. Every plate gets a human look before printing.</div>
+        <label for="plateDesign">Design
+          <select id="plateDesign">
+            <option value="plate">Classic plate tee</option>
+            <option value="runover">Tired: I've been run over by…</option>
+          </select>
+        </label>
         <label for="plateStyle">Plate style
           <select id="plateStyle">
             <option value="classic">Coopteeville Classic</option>
@@ -549,13 +555,17 @@ function sayingArt(p){return c=>{
 }}
 
 /* ---------- Tired collection: tire tracks across the shirt ---------- */
-function treadArt(p){return c=>{
- const dark=c.ink==="#ffffff", tc=dark?"#7d8698":"#4a5068", id="tr"+(gid++), accent=dark?"#ffc83a":"#e0362b";
+function tireTracks(c,y1=112,y2=196){
+ const dark=c.ink==="#ffffff", tc=dark?"#7d8698":"#4a5068", id="tr"+(gid++);
  let blocks="";for(let i=0;i<26;i++){const x=-70+i*18;blocks+=`<path d="M${x} 0 h12 l8 19 h-12z M${x+8} 23 h12 l-8 19 h-12z"/>`}
  const track=y=>`<g transform="translate(0,${y}) rotate(-24 150 21)" fill="${tc}"><rect x="-70" y="19.5" width="470" height="3" />${blocks}</g>`;
+ return `<defs><clipPath id="${id}"><path d="${TEE_PATH}"/></clipPath></defs><g clip-path="url(#${id})">${track(y1)}${track(y2)}</g>`;
+}
+function treadArt(p){return c=>{
+ const dark=c.ink==="#ffffff", accent=dark?"#ffc83a":"#e0362b";
  const lines=wrap(p.saying.toUpperCase(),10), base=lines.length>3?24:28, y0=170-(lines.length-1)*base*0.56;
  const txt=(t,y,f,fill)=>`<text x="150" y="${y}" text-anchor="middle" font-family="Bungee,Arial Black,sans-serif" font-size="${f}" fill="${fill}" stroke="${c.fill}" stroke-width="7" stroke-linejoin="round" paint-order="stroke">${esc(t)}</text>`;
- return `<defs><clipPath id="${id}"><path d="${TEE_PATH}"/></clipPath></defs><g clip-path="url(#${id})">${track(112)}${track(196)}</g>`+
+ return tireTracks(c)+
   lines.map((l,i)=>txt(l,y0+i*base*1.08,Math.min(base,150/(l.length*0.8)).toFixed(1),i===lines.length-1?accent:c.ink)).join("")+
   `<text x="150" y="${y0+lines.length*base*1.08+4}" text-anchor="middle" font-family="Baloo 2,sans-serif" font-weight="800" font-size="10" letter-spacing="2" fill="${c.ink}" stroke="${c.fill}" stroke-width="4" paint-order="stroke">— ${esc(RES[p.res].name.toUpperCase())}</text>`;
 }}
@@ -580,6 +590,12 @@ function plateGroup(text,style,tag,x,y,w){
  <circle cx="18" cy="${h*0.42}" r="3" fill="${s.fg}" opacity=".5"/><circle cx="${w-18}" cy="${h*0.42}" r="3" fill="${s.fg}" opacity=".5"/></g>`;
 }
 
+function plateArt(cu,color){
+ if(cu.design!=="runover")return tee(color,()=>plateGroup(cu.text,cu.style,cu.tag,82,118,136));
+ return tee(color,c=>{const t=(s,y)=>`<text x="150" y="${y}" text-anchor="middle" font-family="Bungee,Arial Black,sans-serif" font-size="15" fill="${c.ink}" stroke="${c.fill}" stroke-width="6" stroke-linejoin="round" paint-order="stroke">${s}</text>`;
+  return tireTracks(c,96,206)+t("I'VE BEEN",110)+t("RUN OVER BY",128)+plateGroup(cu.text,cu.style,cu.tag,82,140,136)});
+}
+
 /* ---------- Catalog (display copy; server re-prices every order) ---------- */
 const PRODUCTS=[
  {id:"cv-001",saying:"I'm not speeding, I'm qualifying",res:"coop",color:"white",tile:"#ffe1dc",price:2800,lap:"Lap 1/3",left:58},
@@ -599,7 +615,8 @@ const PRODUCTS=[
  {id:"cv-015",saying:"Exhausted. Also tired.",res:"torque",color:"white",tile:"#e4e8f0",price:2800,lap:"New · Lap 1/3",left:100,art:"tread"},
  {id:"cv-016",saying:"Running on bald tires and hope",res:"dee",color:"black",tile:"#e4e8f0",price:2800,lap:"New · Lap 1/3",left:100,art:"tread"},
  {id:"cv-017",saying:"Too tired to merge",res:"gran",color:"sky",tile:"#e4e8f0",price:2800,lap:"New · Lap 1/3",left:100,art:"tread"},
- {id:"cv-018",saying:"Tired of waiting for a charger",res:"sparky",color:"black",tile:"#e4e8f0",price:2800,lap:"New · Lap 1/3",left:100,art:"tread"}
+ {id:"cv-018",saying:"Tired of waiting for a charger",res:"sparky",color:"black",tile:"#e4e8f0",price:2800,lap:"New · Lap 1/3",left:100,art:"tread"},
+ {id:"cv-019",saying:"Tread lightly, I'm tired",res:"dee",color:"heather",tile:"#e4e8f0",price:2800,lap:"New · Lap 1/3",left:100,art:"tread"}
 ];
 const SIZES=["S","M","L","XL","2XL","3XL"];
 const sizeOpts=(sel="M")=>SIZES.map(s=>`<option${s===sel?" selected":""}>${s}</option>`).join("");
@@ -635,13 +652,13 @@ let plateColor="white";
 $("#plateColors").innerHTML=Object.entries(TEE_COLORS).map(([k,c])=>`<button type="button" class="sw" style="background:${c.fill}" data-c="${k}" aria-label="${c.name}" aria-pressed="${k==="white"}"></button>`).join("");
 $("#plateSize").innerHTML=sizeOpts();
 const clean=v=>v.toUpperCase().replace(/[^A-Z0-9 ]/g,"").slice(0,7);
-function renderPlate(){const t=clean($("#plateText").value)||"COOPTEE";$("#platePreview").innerHTML=tee(plateColor,()=>plateGroup(t,$("#plateStyle").value,$("#plateTag").value,82,118,136))}
+function renderPlate(){const t=clean($("#plateText").value)||"COOPTEE";$("#platePreview").innerHTML=plateArt({text:t,style:$("#plateStyle").value,tag:$("#plateTag").value,design:$("#plateDesign").value},plateColor)}
 $("#plateText").addEventListener("input",e=>{const v=clean(e.target.value);if(v!==e.target.value)e.target.value=v;renderPlate()});
-["#plateStyle","#plateTag"].forEach(s=>$(s).addEventListener("change",renderPlate));
+["#plateStyle","#plateTag","#plateDesign"].forEach(s=>$(s).addEventListener("change",renderPlate));
 $("#plateColors").addEventListener("click",e=>{const b=e.target.closest(".sw");if(!b)return;plateColor=b.dataset.c;document.querySelectorAll(".sw").forEach(s=>s.setAttribute("aria-pressed",s===b));renderPlate()});
 $("#plateForm").addEventListener("submit",e=>{e.preventDefault();const t=clean($("#plateText").value).trim();if(!t){toast("Type at least one character for your plate.");return}
- const custom={text:t,style:$("#plateStyle").value,tag:$("#plateTag").value};
- addToCart({key:"plate-"+t+"-"+custom.style+"-"+plateColor+"-"+$("#plateSize").value,id:"cv-plate",name:"Vanity Plate: "+t,size:$("#plateSize").value,color:plateColor,price:3200,custom})});
+ const custom={text:t,style:$("#plateStyle").value,tag:$("#plateTag").value,design:$("#plateDesign").value};
+ addToCart({key:"plate-"+custom.design+"-"+t+"-"+custom.style+"-"+custom.tag+"-"+plateColor+"-"+$("#plateSize").value,id:"cv-plate",name:(custom.design==="runover"?"Run Over By: ":"Vanity Plate: ")+t,size:$("#plateSize").value,color:plateColor,price:3200,custom})});
 renderPlate();
 
 /* ---------- Pit lane ---------- */
@@ -686,7 +703,7 @@ function parkCar(color){
  });
 }
 function showCount(){const n=cart.reduce((a,c)=>a+c.qty,0);shownCount=n;$("#gcount").textContent=n>99?"99+":n;$("#garage").setAttribute("aria-label","Open your garage (cart), "+n+" item"+(n===1?"":"s"))}
-function lineArt(c){if(c.custom)return tee(c.color,()=>plateGroup(c.custom.text,c.custom.style,c.custom.tag,82,118,136));const p=PRODUCTS.find(x=>x.id===c.id);return p?tee(c.color,artFor(p)):""}
+function lineArt(c){if(c.custom)return plateArt(c.custom,c.color);const p=PRODUCTS.find(x=>x.id===c.id);return p?tee(c.color,artFor(p)):""}
 function renderCart(){
  const n=cart.reduce((a,c)=>a+c.qty,0), sub=cart.reduce((a,c)=>a+c.qty*c.price,0), ship=sub===0||sub>=FREE_SHIP?0:SHIP;
  $("#cartCount").textContent=n>99?"99+":n;$("#openCart").setAttribute("aria-label","Open your garage (cart), "+n+" item"+(n===1?"":"s"));if(shownCount===null||!$("#garage").classList.contains("open"))queueMicrotask(()=>{if(!$("#garage").classList.contains("open")&&!$("#garage").classList.contains("drive"))showCount()});
