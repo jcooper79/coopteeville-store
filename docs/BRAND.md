@@ -27,9 +27,23 @@
 - **Baloo 2**, body: rounded and friendly.
 
 ## Character rules (IP guardrails)
-- Our cars see through **headlight eyes with a grille mouth**. Never put the eyes in the windshield. That look belongs to a well-known animated film franchise, and staying clear of it keeps us safe.
-- No real car brand names, badges, or recognizable grilles (no "Mustang", no BMW kidney grille). Use generic shapes only.
-- No celebrity names on shirts. "Torque Norris" is a pun name on a fictional character. Never pair it with a real person's likeness or a claim of endorsement. (Legal should check this name before launch. The fallback is "Torque McGraw".)
+We aim for the *feel* of a big-studio animated car movie (glossy paint, cinematic light, expressive eyes, a warm small town) and never copy its *expression*. The genre of living cartoon cars belongs to no one. Specific characters, designs, names and settings do.
+
+**Ours to use:** living cartoon vehicles, a small car town, racing and road-trip energy, golden-hour lighting, glossy reflections and chrome, big colorful eyes, heart and humor.
+
+**Coopteeville signatures (keep these):**
+- Eyes are the **headlights**, with a grille mouth and chrome bumper. **Never put the eyes in the windshield.** That is the film franchise's signature look.
+- Setting is a **green Midwest town** with a water tower, the Pit Stop Diner, Fuel & Fun and Rusty's Repairs. Not a desert Route 66 town with red rock mesas.
+- Our own cast, names, personalities and sayings.
+
+**Never:**
+- Their character names, look-alike characters (a red race car with a lightning bolt and the number 95, a rusty tow truck with buck teeth, a cone-shaped motel), their racing league names, or the movie's logo lettering.
+- Movie quotes or catchphrases, or soundalikes of them.
+- Marketing like "inspired by *Cars*", "Cars-style", or using the film's title in ads, keywords or hashtags.
+- Real car brand names, badges or recognizable grilles. Use generic shapes only.
+- Celebrity names on shirts. "Torque Norris" is a pun on a fictional character, never shown with a real person's likeness or a claim of endorsement. Legal should check the name before launch; the fallback is "Torque McGraw".
+
+Have an IP attorney review the cast and the logo before trademark filing and before paid ads run.
 
 ## Voice
 Warm, punny, never mean. We punch at ourselves, traffic, and Mondays, never at groups of people. Short sentences. A resident always "says" the line.
