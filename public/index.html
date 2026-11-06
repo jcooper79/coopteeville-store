@@ -132,7 +132,7 @@ section.block{padding-block:72px}
 .price{font-family:var(--display);font-size:1.1rem}
 .buy{display:flex;gap:8px;margin-top:auto}
 .buy select{border:2px solid var(--ink);border-radius:10px;padding:.25em .4em;background:var(--paper);font-weight:700}
-.buy .btn{flex:1;justify-content:center}
+.buy .btn{flex:1;justify-content:center;white-space:nowrap;padding-inline:.7em}
 .buy .park{flex:0 0 auto;font-family:var(--display);background:#1e5fbf;color:#fff}
 
 /* Plate maker */
@@ -548,6 +548,19 @@ function sayingArt(p){return c=>{
   `<text x="150" y="${y0+lines.length*fs*1.12+6}" text-anchor="middle" font-family="Baloo 2,sans-serif" font-weight="800" font-size="9" letter-spacing="2" fill="${c.ink}" opacity=".7">— ${esc(RES[p.res].name.toUpperCase())}</text>`;
 }}
 
+/* ---------- Tired collection: tire tracks across the shirt ---------- */
+function treadArt(p){return c=>{
+ const dark=c.ink==="#ffffff", tc=dark?"#7d8698":"#4a5068", id="tr"+(gid++), accent=dark?"#ffc83a":"#e0362b";
+ let blocks="";for(let i=0;i<26;i++){const x=-70+i*18;blocks+=`<path d="M${x} 0 h12 l8 19 h-12z M${x+8} 23 h12 l-8 19 h-12z"/>`}
+ const track=y=>`<g transform="translate(0,${y}) rotate(-24 150 21)" fill="${tc}"><rect x="-70" y="19.5" width="470" height="3" />${blocks}</g>`;
+ const lines=wrap(p.saying.toUpperCase(),10), base=lines.length>3?24:28, y0=170-(lines.length-1)*base*0.56;
+ const txt=(t,y,f,fill)=>`<text x="150" y="${y}" text-anchor="middle" font-family="Bungee,Arial Black,sans-serif" font-size="${f}" fill="${fill}" stroke="${c.fill}" stroke-width="7" stroke-linejoin="round" paint-order="stroke">${esc(t)}</text>`;
+ return `<defs><clipPath id="${id}"><path d="${TEE_PATH}"/></clipPath></defs><g clip-path="url(#${id})">${track(112)}${track(196)}</g>`+
+  lines.map((l,i)=>txt(l,y0+i*base*1.08,Math.min(base,150/(l.length*0.8)).toFixed(1),i===lines.length-1?accent:c.ink)).join("")+
+  `<text x="150" y="${y0+lines.length*base*1.08+4}" text-anchor="middle" font-family="Baloo 2,sans-serif" font-weight="800" font-size="10" letter-spacing="2" fill="${c.ink}" stroke="${c.fill}" stroke-width="4" paint-order="stroke">— ${esc(RES[p.res].name.toUpperCase())}</text>`;
+}}
+const artFor=p=>p.art==="tread"?treadArt(p):sayingArt(p);
+
 /* ---------- Plates ---------- */
 const PLATE_STYLES={
  classic:{bg:"#ffffff",fg:"#1e4fa8",band:"#1e4fa8",bandText:"#ffffff",border:"#1e4fa8"},
@@ -580,7 +593,13 @@ const PRODUCTS=[
  {id:"cv-009",saying:"Parallel parking champion (self-proclaimed)",res:"gran",color:"white",tile:"#d9f3ec",price:2800,lap:"Lap 1/3",left:66},
  {id:"cv-010",saying:"Running on fumes and spite",res:"dee",color:"cherry",tile:"#ffe4cc",price:2800,lap:"Lap 2/3",left:31},
  {id:"cv-011",saying:"Built different. Rebuilt twice.",res:"rusty",color:"black",tile:"#efdfd2",price:2800,lap:"Lap 1/3",left:55},
- {id:"cv-012",saying:"I brake for snacks",res:"coop",color:"sky",tile:"#ffe1dc",price:2800,lap:"Hall of Fame",hof:true}
+ {id:"cv-012",saying:"I brake for snacks",res:"coop",color:"sky",tile:"#ffe1dc",price:2800,lap:"Hall of Fame",hof:true},
+ {id:"cv-013",saying:"Monday ran me over",res:"coop",color:"white",tile:"#e4e8f0",price:2800,lap:"New · Lap 1/3",left:100,art:"tread"},
+ {id:"cv-014",saying:"Tired. Retired. Re-tired.",res:"rusty",color:"heather",tile:"#e4e8f0",price:2800,lap:"New · Lap 1/3",left:100,art:"tread"},
+ {id:"cv-015",saying:"Exhausted. Also tired.",res:"torque",color:"white",tile:"#e4e8f0",price:2800,lap:"New · Lap 1/3",left:100,art:"tread"},
+ {id:"cv-016",saying:"Running on bald tires and hope",res:"dee",color:"black",tile:"#e4e8f0",price:2800,lap:"New · Lap 1/3",left:100,art:"tread"},
+ {id:"cv-017",saying:"Too tired to merge",res:"gran",color:"sky",tile:"#e4e8f0",price:2800,lap:"New · Lap 1/3",left:100,art:"tread"},
+ {id:"cv-018",saying:"Tired of waiting for a charger",res:"sparky",color:"black",tile:"#e4e8f0",price:2800,lap:"New · Lap 1/3",left:100,art:"tread"}
 ];
 const SIZES=["S","M","L","XL","2XL","3XL"];
 const sizeOpts=(sel="M")=>SIZES.map(s=>`<option${s===sel?" selected":""}>${s}</option>`).join("");
@@ -597,14 +616,14 @@ document.addEventListener("pointermove",e=>{const dx=(e.clientX/innerWidth-.5)*8
 /* ---------- Residents + filters ---------- */
 let filter="all";
 $("#residentList").innerHTML=RESIDENTS.map(r=>`<button class="res" data-res="${r.id}" aria-pressed="false">${carFront(r,{k:"card",still:false})}<h3>${esc(r.name)}</h3><small>${esc(r.role)}</small></button>`).join("");
-$("#filters").innerHTML=[["all","Everyone"],...RESIDENTS.map(r=>[r.id,r.name.split(" ")[0]])].map(([id,n])=>`<button class="chip" data-f="${id}" aria-pressed="${id==="all"}">${esc(n)}</button>`).join("");
+$("#filters").innerHTML=[["all","Everyone"],["tired","Tired Collection"],...RESIDENTS.map(r=>[r.id,r.name.split(" ")[0]])].map(([id,n])=>`<button class="chip" data-f="${id}" aria-pressed="${id==="all"}">${esc(n)}</button>`).join("");
 function setFilter(f){filter=f;document.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",c.dataset.f===f));document.querySelectorAll(".res").forEach(c=>c.setAttribute("aria-pressed",c.dataset.res===f));renderGrid()}
 $("#filters").addEventListener("click",e=>{const b=e.target.closest(".chip");if(b)setFilter(b.dataset.f)});
 $("#residentList").addEventListener("click",e=>{const b=e.target.closest(".res");if(!b)return;setFilter(filter===b.dataset.res?"all":b.dataset.res);$("#shop").scrollIntoView({behavior:"smooth"})});
 
 function renderGrid(){
- const list=PRODUCTS.filter(p=>filter==="all"||p.res===filter);
- $("#grid").innerHTML=list.map(p=>`<article class="card"><div class="art" style="--tile:${p.tile}"><span class="lap${p.hof?" hof":""}">${p.hof?"★ Hall of Fame":esc(p.lap)+" · "+p.left+" left"}</span>${tee(p.color,sayingArt(p))}</div>
+ const list=PRODUCTS.filter(p=>filter==="all"||(filter==="tired"?p.art==="tread":p.res===filter));
+ $("#grid").innerHTML=list.map(p=>`<article class="card"><div class="art" style="--tile:${p.tile}"><span class="lap${p.hof?" hof":""}">${p.hof?"★ Hall of Fame":esc(p.lap)+" · "+p.left+" left"}</span>${tee(p.color,artFor(p))}</div>
  <div class="body"><h3>${esc(p.saying)}</h3><div class="meta"><span class="who">${esc(RES[p.res].name)} · ${TEE_COLORS[p.color].name}</span><span class="price">${money(p.price)}</span></div>
  <div class="buy"><select aria-label="Size for ${esc(p.saying)}" id="size-${p.id}">${sizeOpts()}</select><button class="btn sm" data-add="${p.id}">Add to garage</button><button class="btn sm alt park" data-park="${p.id}" aria-label="Save ${esc(p.saying)} for later in your parking lot" title="Save for later">P</button></div></div></article>`).join("");
 }
@@ -667,7 +686,7 @@ function parkCar(color){
  });
 }
 function showCount(){const n=cart.reduce((a,c)=>a+c.qty,0);shownCount=n;$("#gcount").textContent=n>99?"99+":n;$("#garage").setAttribute("aria-label","Open your garage (cart), "+n+" item"+(n===1?"":"s"))}
-function lineArt(c){if(c.custom)return tee(c.color,()=>plateGroup(c.custom.text,c.custom.style,c.custom.tag,82,118,136));const p=PRODUCTS.find(x=>x.id===c.id);return p?tee(c.color,sayingArt(p)):""}
+function lineArt(c){if(c.custom)return tee(c.color,()=>plateGroup(c.custom.text,c.custom.style,c.custom.tag,82,118,136));const p=PRODUCTS.find(x=>x.id===c.id);return p?tee(c.color,artFor(p)):""}
 function renderCart(){
  const n=cart.reduce((a,c)=>a+c.qty,0), sub=cart.reduce((a,c)=>a+c.qty*c.price,0), ship=sub===0||sub>=FREE_SHIP?0:SHIP;
  $("#cartCount").textContent=n>99?"99+":n;$("#openCart").setAttribute("aria-label","Open your garage (cart), "+n+" item"+(n===1?"":"s"));if(shownCount===null||!$("#garage").classList.contains("open"))queueMicrotask(()=>{if(!$("#garage").classList.contains("open")&&!$("#garage").classList.contains("drive"))showCount()});

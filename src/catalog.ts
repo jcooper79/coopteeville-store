@@ -37,6 +37,13 @@ export const PRODUCTS: Product[] = [
   p("cv-010", "Running on fumes and spite", "dee", ["cherry"]),
   p("cv-011", "Built different. Rebuilt twice.", "rusty", ["black"]),
   p("cv-012", "I brake for snacks", "coop", ["sky"]),
+  // The Tired Collection: tire tracks across the shirt
+  p("cv-013", "Monday ran me over", "coop", ["white"]),
+  p("cv-014", "Tired. Retired. Re-tired.", "rusty", ["heather"]),
+  p("cv-015", "Exhausted. Also tired.", "torque", ["white"]),
+  p("cv-016", "Running on bald tires and hope", "dee", ["black"]),
+  p("cv-017", "Too tired to merge", "gran", ["sky"]),
+  p("cv-018", "Tired of waiting for a charger", "sparky", ["black"]),
 ];
 
 export const PLATE: Product = {
