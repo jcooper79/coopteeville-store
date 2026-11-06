@@ -1,0 +1,5 @@
+# Copy to .dev.vars for local dev. In production set these with `wrangler secret put <NAME>`.
+STRIPE_SECRET_KEY=sk_test_xxx
+STRIPE_WEBHOOK_SECRET=whsec_xxx
+PRINTFUL_API_KEY=xxx
+VOTE_SALT=any-long-random-string

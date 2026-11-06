@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300" role="img" aria-label="Coopteeville logo">
+  <!-- Town-sign wordmark. Outline the text before sending to print vendors. -->
+  <defs>
+    <style>.d{font-family:Bungee,'Arial Black',sans-serif}.b{font-family:'Baloo 2',sans-serif;font-weight:800}</style>
+  </defs>
+  <rect x="40" y="110" width="20" height="180" rx="6" fill="#1c2033"/>
+  <rect x="580" y="110" width="20" height="180" rx="6" fill="#1c2033"/>
+  <rect x="10" y="96" width="620" height="150" rx="34" fill="#1c2033"/>
+  <rect x="20" y="104" width="600" height="132" rx="28" fill="#ffc83a"/>
+  <text x="320" y="138" text-anchor="middle" class="b" font-size="20" letter-spacing="6" fill="#1c2033">WELCOME TO</text>
+  <text x="320" y="198" text-anchor="middle" class="d" font-size="58" fill="#1c2033">COOPTEE<tspan fill="#ff4b3e">VILLE</tspan></text>
+  <text x="320" y="226" text-anchor="middle" class="b" font-size="16" letter-spacing="4" fill="#1c2033">EST. 2026 · POP. HILARIOUS</text>
+  <!-- Coop the Coupe peeking over the sign -->
+  <g transform="translate(250,6)">
+    <rect x="18" y="66" width="104" height="44" rx="20" fill="#ff4b3e" stroke="#9e1f16" stroke-width="4"/>
+    <path d="M34 70 Q38 20 70 20 Q102 20 106 70 Z" fill="#ff4b3e" stroke="#9e1f16" stroke-width="4"/>
+    <path d="M44 68 Q48 34 70 33 Q92 34 96 68 Z" fill="#bfe6ff" stroke="#9e1f16" stroke-width="3"/>
+    <path d="M64 20 H76 V110 H64 Z" fill="#fff" opacity=".9"/>
+    <circle cx="44" cy="88" r="15" fill="#fff" stroke="#9e1f16" stroke-width="4"/><circle cx="47" cy="90" r="6.5" fill="#1c2033"/><circle cx="49" cy="87" r="2" fill="#fff"/>
+    <circle cx="96" cy="88" r="15" fill="#fff" stroke="#9e1f16" stroke-width="4"/><circle cx="99" cy="90" r="6.5" fill="#1c2033"/><circle cx="101" cy="87" r="2" fill="#fff"/>
+    <path d="M28 66 Q44 58 60 66 M80 66 Q96 58 112 66" stroke="#1c2033" stroke-width="5" stroke-linecap="round" fill="none"/>
+  </g>
+</svg>
