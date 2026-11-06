@@ -2,9 +2,9 @@ import {
   COLORS, PIT_LANE_IDS, PLATE, PLATE_DESIGNS, PLATE_STYLES, PLATE_TAGS, SHIPPING, SIZES,
   findProduct, validPlate, type Color, type Size,
 } from "./catalog";
+import { STATIC } from "./static";
 
 export interface Env {
-  ASSETS: Fetcher;
   DB: D1Database;
   SITE_URL: string;
   PRINTFUL_AUTO_CONFIRM: string;
@@ -41,13 +41,30 @@ export default {
       if (pathname === "/api/pitlane" && req.method === "GET") return await tallies(env);
       if (pathname === "/api/pitlane/vote" && req.method === "POST") return await vote(req, env);
       if (pathname.startsWith("/api/")) return json({ error: "Not found" }, 404);
-      return env.ASSETS.fetch(req);
+      return serveStatic(req, pathname);
     } catch (err) {
       console.error(err);
       return json({ error: "Something went wrong on our end. Please try again." }, 500);
     }
   },
 } satisfies ExportedHandler<Env>;
+
+/* ---------------- Static files ---------------- */
+
+// Pre-launch: every page says noindex. Remove X-Robots-Tag (and update robots.txt) at launch.
+const BASE_HEADERS = {
+  "X-Robots-Tag": "noindex, nofollow",
+  "X-Content-Type-Options": "nosniff",
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+};
+
+function serveStatic(req: Request, pathname: string): Response {
+  if (req.method !== "GET" && req.method !== "HEAD") return new Response("Method not allowed", { status: 405, headers: BASE_HEADERS });
+  const f = STATIC[pathname];
+  if (!f) return new Response("Not found. Head back to https://coopteeville.com", { status: 404, headers: { ...BASE_HEADERS, "content-type": "text/plain" } });
+  const cache = f.type.startsWith("text/html") ? "public, max-age=60" : "public, max-age=3600";
+  return new Response(req.method === "HEAD" ? null : f.body, { headers: { ...BASE_HEADERS, "content-type": f.type, "cache-control": cache } });
+}
 
 /* ---------------- Checkout ---------------- */
 

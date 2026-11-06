@@ -22,6 +22,7 @@ function parsePng(buf) {
   return {
     width: ih.readUInt32BE(0), height: ih.readUInt32BE(4), bitDepth: ih[8], colorType: ih[9], interlace: ih[12],
     phys: chunks.pHYs, srgb: !!chunks.sRGB, icc: chunks.iCCP ? chunks.iCCP.toString("latin1", 0, chunks.iCCP.indexOf(0)) : null,
+    iccData: chunks.iCCP ? chunks.iCCP.subarray(chunks.iCCP.indexOf(0) + 2) : null,
     idat: Buffer.concat(idat),
   };
 }
@@ -67,7 +68,9 @@ for (const file of process.argv.slice(2)) {
       (dpi === SPEC.dpi ? info : warns).push(`${dpi} DPI${dpi === SPEC.dpi ? " ✓" : ` — set export to ${SPEC.dpi}`}`);
     } else warns.push("no DPI stored — set export to 300 DPI");
 
-    if (png.srgb || /srgb/i.test(png.icc ?? "")) info.push("sRGB ✓");
+    let iccIsSrgb = false;
+    if (png.iccData) { try { const t = inflateSync(png.iccData).toString("latin1"); iccIsSrgb = /sRGB/i.test(t) || /s\0R\0G\0B/i.test(t); } catch {} }
+    if (png.srgb || /srgb/i.test(png.icc ?? "") || iccIsSrgb) info.push("sRGB ✓");
     else warns.push(png.icc ? `color profile "${png.icc}" — use sRGB IEC61966-2.1` : "no color profile — embed sRGB");
 
     if (png.colorType !== 6 || png.bitDepth !== 8 || png.interlace !== 0) {

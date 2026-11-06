@@ -1,17 +1,16 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "coopteeville-store",
+  "account_id": "712e38517a7e6baf08301e3202ca5da8",
   "main": "src/index.ts",
   "compatibility_date": "2026-10-01",
-  // Static storefront from ./public; the Worker only runs for /api/*.
-  "assets": {
-    "directory": "./public",
-    "binding": "ASSETS",
-    "run_worker_first": ["/api/*"],
-    "not_found_handling": "404-page"
-  },
+  // Storefront files are bundled into the Worker (see src/static.ts).
+  "rules": [
+    { "type": "Text", "globs": ["**/*.html", "**/*.svg", "**/*.txt"], "fallthrough": true },
+    { "type": "Data", "globs": ["**/*.png"], "fallthrough": true }
+  ],
   "d1_databases": [
-    { "binding": "DB", "database_name": "coopteeville", "database_id": "REPLACE_AFTER_wrangler_d1_create", "migrations_dir": "migrations" }
+    { "binding": "DB", "database_name": "coopteeville", "database_id": "60af6145-c51a-4f29-b4ba-59f3670902a1", "migrations_dir": "migrations" }
   ],
   "vars": {
     "SITE_URL": "https://coopteeville.com",
@@ -19,7 +18,13 @@
     "PRINTFUL_AUTO_CONFIRM": "true",
     // false = plate orders wait as Printful drafts for a quick review. Flip to true once the AI plate check ships.
     "PLATE_AUTO_APPROVE": "false",
-    "EMAIL_FROM": "Coopteeville <orders@coopteeville.com>"
+    "EMAIL_FROM": "Coopteeville Pit Crew <glovebox@coopteeville.com>"
   },
+  // Serve the store on the apex and www. Cloudflare creates and manages the DNS records.
+  "routes": [
+    { "pattern": "coopteeville.com", "custom_domain": true },
+    { "pattern": "www.coopteeville.com", "custom_domain": true }
+  ],
+  "workers_dev": false,
   "observability": { "enabled": true }
 }
