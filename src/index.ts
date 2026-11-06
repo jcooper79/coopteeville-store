@@ -12,6 +12,10 @@ export interface Env {
   STRIPE_WEBHOOK_SECRET: string;
   PRINTFUL_API_KEY: string;
   PRINTFUL_STORE_ID?: string;
+  PRINTFUL_WEBHOOK_TOKEN: string;
+  PLATE_AUTO_APPROVE: string;
+  RESEND_API_KEY?: string;
+  EMAIL_FROM: string;
   VOTE_SALT: string;
 }
 
@@ -32,6 +36,7 @@ export default {
     try {
       if (pathname === "/api/checkout" && req.method === "POST") return await checkout(req, env);
       if (pathname === "/api/webhooks/stripe" && req.method === "POST") return await stripeWebhook(req, env);
+      if (pathname === "/api/webhooks/printful" && req.method === "POST") return await printfulWebhook(req, env);
       if (pathname === "/api/pitlane" && req.method === "GET") return await tallies(env);
       if (pathname === "/api/pitlane/vote" && req.method === "POST") return await vote(req, env);
       if (pathname.startsWith("/api/")) return json({ error: "Not found" }, 404);
@@ -167,8 +172,13 @@ async function stripeWebhook(req: Request, env: Env): Promise<Response> {
   }
 
   try {
-    const pfId = await createPrintfulOrder(env, s, JSON.parse(row.items_json) as CartItem[]);
-    await markOrder(env, s.id, env.PRINTFUL_AUTO_CONFIRM === "true" ? "sent_to_printful" : "printful_draft", pfId, null);
+    const cart = JSON.parse(row.items_json) as CartItem[];
+    // Catalog items print automatically. Plates auto-print only once automated
+    // moderation is trusted (PLATE_AUTO_APPROVE); until then they wait as drafts.
+    const needsReview = cart.some((i) => i.custom) && env.PLATE_AUTO_APPROVE !== "true";
+    const confirm = env.PRINTFUL_AUTO_CONFIRM === "true" && !needsReview;
+    const pfId = await createPrintfulOrder(env, s, cart, confirm);
+    await markOrder(env, s.id, confirm ? "in_production" : "needs_review", pfId, null);
   } catch (err) {
     // Payment is captured; flag for manual fulfillment instead of failing the webhook.
     await markOrder(env, s.id, "error", null, String(err).slice(0, 500));
@@ -180,7 +190,7 @@ const markOrder = (env: Env, sessionId: string, status: string, pfId: string | n
   env.DB.prepare("UPDATE orders SET status = ?, printful_order_id = ?, error = ? WHERE stripe_session_id = ?")
     .bind(status, pfId, error, sessionId).run();
 
-async function createPrintfulOrder(env: Env, s: any, cart: CartItem[]): Promise<string> {
+async function createPrintfulOrder(env: Env, s: any, cart: CartItem[], confirm: boolean): Promise<string> {
   // Newer Stripe API versions nest shipping under collected_information.
   const ship = s.collected_information?.shipping_details ?? s.shipping_details;
   const a = ship?.address;
@@ -199,7 +209,6 @@ async function createPrintfulOrder(env: Env, s: any, cart: CartItem[]): Promise<
   const headers: Record<string, string> = { authorization: `Bearer ${env.PRINTFUL_API_KEY}`, "content-type": "application/json" };
   if (env.PRINTFUL_STORE_ID) headers["X-PF-Store-Id"] = env.PRINTFUL_STORE_ID;
 
-  const confirm = env.PRINTFUL_AUTO_CONFIRM === "true";
   const res = await fetch(`https://api.printful.com/orders?confirm=${confirm}`, {
     method: "POST",
     headers,
@@ -216,6 +225,45 @@ async function createPrintfulOrder(env: Env, s: any, cart: CartItem[]): Promise<
   const out = (await res.json()) as { result?: { id: number }; error?: { message: string } };
   if (!res.ok || !out.result) throw new Error(`printful ${res.status}: ${out.error?.message ?? "unknown"}`);
   return String(out.result.id);
+}
+
+/* ---------------- Printful webhook -> tracking email ---------------- */
+
+async function printfulWebhook(req: Request, env: Env): Promise<Response> {
+  // Printful webhooks are registered with ?token=<PRINTFUL_WEBHOOK_TOKEN>.
+  const token = new URL(req.url).searchParams.get("token") ?? "";
+  if (!env.PRINTFUL_WEBHOOK_TOKEN || !safeEqual(token, env.PRINTFUL_WEBHOOK_TOKEN)) return json({ error: "forbidden" }, 403);
+
+  const ev = (await req.json().catch(() => null)) as any;
+  const pfId = ev?.data?.order?.id != null ? String(ev.data.order.id) : null;
+  if (!pfId) return json({ received: true });
+  const order = await env.DB.prepare("SELECT email FROM orders WHERE printful_order_id = ?").bind(pfId).first<{ email: string | null }>();
+  if (!order) return json({ received: true });
+
+  if (ev.type === "package_shipped") {
+    const sh = ev.data.shipment ?? {};
+    await env.DB.prepare("UPDATE orders SET status = 'shipped', carrier = ?, tracking_url = ? WHERE printful_order_id = ?")
+      .bind(sh.carrier ?? null, sh.tracking_url ?? null, pfId).run();
+    if (order.email) await sendShippedEmail(env, order.email, sh.tracking_url, sh.carrier);
+  } else if (ev.type === "order_failed" || ev.type === "order_put_hold" || ev.type === "order_canceled") {
+    // Lands in the exception queue that the Fulfillment Coordinator works.
+    await env.DB.prepare("UPDATE orders SET status = ?, error = ? WHERE printful_order_id = ?")
+      .bind(ev.type === "order_canceled" ? "canceled" : "error", String(ev.data.reason ?? ev.type).slice(0, 500), pfId).run();
+  }
+  return json({ received: true });
+}
+
+async function sendShippedEmail(env: Env, to: string, trackingUrl?: string, carrier?: string) {
+  if (!env.RESEND_API_KEY) return; // email optional until the key is set
+  const link = trackingUrl ? `<p><a href="${trackingUrl}">Track it here</a>${carrier ? ` (${carrier})` : ""}.</p>` : "";
+  await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { authorization: `Bearer ${env.RESEND_API_KEY}`, "content-type": "application/json" },
+    body: JSON.stringify({
+      from: env.EMAIL_FROM, to, subject: "Your Coopteeville tee is on the road",
+      html: `<p>Good news: your order just left the garage.</p>${link}<p>Honk when it arrives.<br>The Coopteeville crew</p>`,
+    }),
+  }).catch((e) => console.error("resend", e));
 }
 
 /* ---------------- Pit Lane votes ---------------- */

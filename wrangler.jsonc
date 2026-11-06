@@ -15,8 +15,11 @@
   ],
   "vars": {
     "SITE_URL": "https://coopteeville.com",
-    // false = Printful orders land as drafts for a human check. Flip to true after launch QA.
-    "PRINTFUL_AUTO_CONFIRM": "false"
+    // true = paid orders go straight to production at Printful (hands-off fulfillment).
+    "PRINTFUL_AUTO_CONFIRM": "true",
+    // false = plate orders wait as Printful drafts for a quick review. Flip to true once the AI plate check ships.
+    "PLATE_AUTO_APPROVE": "false",
+    "EMAIL_FROM": "Coopteeville <orders@coopteeville.com>"
   },
   "observability": { "enabled": true }
 }

@@ -1,14 +1,19 @@
 # The Coopteeville Crew
 
-Four roles, run as AI agents with a human (the owner) approving anything that spends money, prints, publishes, or refunds. Each role has a clear inbox, a weekly rhythm, and hard limits.
+Eight roles in two crews, run as AI agents with a human (the owner) approving anything that spends money, prints, publishes, or refunds. Each role has a clear inbox, a weekly rhythm, and hard limits.
+
+**Shop crew** makes and ships the product. **Street crew** brings people to the store.
 
 ```
-            Owner (approves)
-                  │
-   ┌──────────────┼───────────────────┬─────────────────────┐
-Product Picker → Designers (2–3) → Fulfillment Coordinator → Customer Happiness Rep
-   ▲                                                         │
-   └──────────── sales, votes, reviews, complaints ◄─────────┘
+                          Owner (approves)
+                                │
+ SHOP CREW   Product Picker → Designers → Fulfillment Coordinator → Customer Happiness Rep
+                  ▲                                                        │
+                  └──────── sales, votes, reviews, complaints ◄────────────┘
+                                │
+ STREET CREW Storyteller → Video Creator/Editor → Social Media Manager → Promotion Specialist
+                  ▲                                                        │
+                  └──────── views, comments, clicks, sales by code ◄───────┘
 ```
 
 ---
@@ -63,6 +68,44 @@ Product Picker → Designers (2–3) → Fulfillment Coordinator → Customer Ha
 
 ---
 
+## 5. Car Storyteller (marketer)
+**Job:** make people care about Coopteeville and its residents, and know why each tee exists.
+
+- **Owns:** the town's "story bible" (each resident's backstory, friendships, running gags), a seasonal storyline (for example "Coop runs for re-election", "Grandma's road trip"), and the story behind every drop.
+- **Weekly output:** 3 short scripts (15–30 seconds) for the Video Creator, product page copy for new designs, and one email story ("This week in Coopteeville").
+- **Story sources:** everyday driving moments (traffic, parking, the first car, road trips with kids) plus real customer stories sent in, used only with permission.
+- **Rules:** BRAND.md voice and IP rules. No movie quotes, no real brands, no real people.
+- **Needs approval:** new residents, storylines that run more than a month.
+
+## 6. Video Creator/Editor
+**Job:** turn the stories into short animated clips of the residents.
+
+- **Makes:** 15–30 second vertical videos (9:16, 1080×1920) of a resident "saying" the line, with the shirt shown at the end on a **real Printful mockup or a filmed sample**. Plus 6–10 second cutdowns and a square version for feeds.
+- **Pipeline:** script, character animation (After Effects, Rive or Blender from the SVG and 3D cast), voice (licensed voice actor or AI voice with commercial rights), captions burned in, and licensed music only.
+- **Weekly output:** 3 finished shorts and 6 cutdowns, delivered to the Social Media Manager's queue.
+- **Needs approval:** the first video for any new resident, and any voice or likeness change.
+
+## 7. Social Media Manager
+**Job:** publish, reply, and grow the following.
+
+- **Channels:** TikTok, Instagram Reels, YouTube Shorts, Facebook (car groups, gift buyers), Pinterest (gift boards).
+- **Daily:** post on schedule, answer comments and DMs in the residents' voice, spot fans posting their shirts or plates and ask to repost them.
+- **Weekly report:** views, follows, saves, link clicks, and sales from social. Which resident and which joke worked.
+- **Feeds back:** top comments and joke requests to the Product Picker (they become Pit Lane candidates).
+- **Can do alone:** scheduled posts already approved, replies, reposting customer posts after they say yes.
+- **Needs approval:** anything off the approved calendar, replies about complaints (handed to Customer Happiness), anything involving a news event.
+
+## 8. Promotion Specialist
+**Job:** turn attention into sales without training customers to wait for discounts.
+
+- **Runs:** drop launches (Pit Lane winners), the seasonal gift calendar (Father's Day, back to school, holidays), Mileage Club rewards, creator and car-club partnerships (Club Kits, affiliate codes), and paid ads behind the best organic clips only.
+- **Tools:** Stripe promotion codes, an email platform (Klaviyo or Resend), Meta/TikTok ad accounts, affiliate links.
+- **Weekly output:** promo calendar, code performance, cost per order on paid ads.
+- **Rules:** at most one sitewide sale a month. Every code has an end date and tracks its source.
+- **Needs approval:** any ad spend, any discount over 15%, partnership agreements.
+
+---
+
 ## How they connect to the store
 | Role | Reads | Writes |
 |---|---|---|
@@ -70,5 +113,9 @@ Product Picker → Designers (2–3) → Fulfillment Coordinator → Customer Ha
 | Designers | Brief | Print files to R2, Printful products and mockups |
 | Fulfillment | `orders`, Printful API | Order status, Printful confirmations |
 | Customer Happiness | `orders`, support inbox | Draft replies; refunds go to the approval queue |
+| Storyteller | Story bible, sales by resident | Scripts, product copy, email stories |
+| Video Creator/Editor | Scripts, cast art, mockups | Videos to the social queue |
+| Social Media Manager | Social queue, comments | Scheduled posts, replies, weekly report |
+| Promotion Specialist | Orders by code, ad dashboards | Stripe codes, email campaigns, ad drafts |
 
 The agents can run on Claude with scheduled tasks. ResQ Collab already has an approval queue that could be the owner's approve/reject inbox.
