@@ -41,7 +41,7 @@ We aim for the *feel* of a big-studio animated car movie (glossy paint, cinemati
 - Movie quotes or catchphrases, or soundalikes of them.
 - Marketing like "inspired by *Cars*", "Cars-style", or using the film's title in ads, keywords or hashtags.
 - Real car brand names, badges or recognizable grilles. Use generic shapes only.
-- Celebrity names on shirts. "Torque Norris" is a pun on a fictional character, never shown with a real person's likeness or a claim of endorsement. Legal should check the name before launch; the fallback is "Torque McGraw".
+- Celebrity names on shirts or characters. **"Torque Norris" puns on a real celebrity's name**, which is a right-of-publicity risk on merchandise. Rename him before launch unless legal clears it. The suggested replacement is "Big Torque".
 
 Have an IP attorney review the cast and the logo before trademark filing and before paid ads run.
 
